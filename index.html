@@ -1,0 +1,240 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Quiz App</title>
+    <style>
+      body {
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+      }
+
+      .card {
+        background: #fff;
+        padding: 25px;
+        border-radius: 12px;
+        width: 320px;
+        text-align: center;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      }
+
+      h3 {
+        margin-bottom: 20px;
+      }
+
+      button {
+        display: block;
+        width: 100%;
+        margin: 8px 0;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: 0.2s;
+      }
+
+      button:hover {
+        transform: scale(1.03);
+      }
+
+      .answer {
+        background: #f5f5f5;
+      }
+
+      .answer:nth-of-type(1) {
+        border-left: 5px solid #3498db;
+      }
+      .answer:nth-of-type(2) {
+        border-left: 5px solid #9b59b6;
+      }
+      .answer:nth-of-type(3) {
+        border-left: 5px solid #e67e22;
+      }
+      .answer:nth-of-type(4) {
+        border-left: 5px solid #2ecc71;
+      }
+
+      .correct {
+        background: #2ecc71;
+        color: #fff;
+      }
+
+      .wrong {
+        background: #e74c3c;
+        color: #fff;
+      }
+
+      #next {
+        margin-top: 15px;
+        background: #333;
+        color: #fff;
+        display: block;
+      }
+      .hint-box {
+        position: fixed;
+        top: -100px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 9999;
+        padding: 12px 25px;
+        border-radius: 4px;
+        color: white;
+        font-weight: 500;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        transition: top 0.4s;
+      }
+      .hint-box.correct {
+        background-color: #0a5b2c ;
+        border: 1px solid #cfcac1;
+      }
+      .hint-box.wrong {
+        background-color: #5a0b0b;
+        border: 1px solid #c5a059;
+      }
+      .hint-box.show {
+        top: 30px;
+      }
+      #retry {
+        display: block;
+        width: 100%;
+        margin-top: 15px;
+        background-color: #3498db;
+        color: white;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+      #retry:hover {
+        background-color: #2980b9;
+      }
+      #history-list li {
+        background: #f9f9f9;
+        margin-bottom: 5px;
+        padding: 5px 10px;
+        border-radius: 4px;
+        border-right: 4px solid #3498db;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+     <h3 id="question"></h3>
+      <div id="answers"></div>
+      <button id="next">Next</button>
+      <button id="retry" style="display: none;">TRY AGAIN !</button>
+      <div id="history-container"
+      style="margin-top: 20px;
+      text-align: center;
+      font-size: 14px;
+      border-top: 1px solid #ddd; 
+      padding-top: 10px;
+      display:none">
+      <strong>PREVIOUS RESULT</strong>
+      <ul id="history-list"
+      style="list-style: none;
+      padding:0;
+      margin-top: 10px;
+      text-align: left;"></ul> 
+      </div>
+    </div>
+     <div id="hint-box"></div>
+
+    <script>
+     const questions = [
+      { q: "what is 2+2", answers:["22", "1", "5", "11"], correct: 0 },
+      { q: "who is the most beautiful girl?", answers:["Jana", "Janawi", "Jane", "Jojo"], correct: 1 },
+      { q: "js stands for?", answers:["javasourse", "justscript", "javascript", "jscript"], correct: 2 },
+      { q: "Html is ?", answers:["programing languge", "os", "markup", "languge"], correct: 3 },
+     ];
+     let current = 0;
+let score = 0;
+     const qEl =  document.getElementById("question");
+     const aEl =  document.getElementById("answers");
+     const nextBtn =  document.getElementById("next");
+     const retryBtn = document.getElementById("retry");
+     const historyContainer = document.getElementById("history-container");
+     let attempts = 0;
+ 
+  function load() {
+    nextBtn.style.display = "none";
+    aEl.innerHTML = "";
+       const q = questions[current];
+      qEl.textContent = q.q;
+
+      q.answers.forEach((ans, i) => {
+     const btn = document.createElement("button");
+     btn.textContent = ans;
+     btn.onclick = () => selectAnswer(btn, i);
+          aEl.appendChild(btn);
+      });
+  }
+
+  function selectAnswer(btn, index) {
+    const correctIndex = questions[current].correct; 
+    nextBtn.style.display ="block";
+
+    const buttons = aEl.querySelectorAll("button");
+
+    buttons.forEach((b, i) => {
+      b.disabled =true;
+if (i == correctIndex) {
+  b.classList.add("correct");
+}
+
+if (i == index && i !== correctIndex) {
+  b.classList.add("wrong");
+}
+ });
+    if(index == correctIndex) { score++; 
+            triggerHint("correct", "Good job");
+  } else {
+    triggerHint("wrong","Try again");
+  }
+  }
+  nextBtn.onclick = () => {
+    current++;
+    if(current < questions.length) {
+
+      load();
+    } else {
+      qEl.textContent = `You Scored ${score}  of 4`;
+      aEl.innerHTML ="";
+      nextBtn.style.display = "none";
+      retryBtn.style.display ="block";
+      historyContainer.style.display ="block";
+      attempts++;
+      const li = document.createElement("li");
+      li.innerText = " Try number " + attempts +" Your Score is " + score;
+      li.style.background = "#f4f4f4";
+      li.style.margin = "4px 0" ;
+      document.getElementById("history-list").appendChild(li);
+      document.getElementById("retry").style.display = "block";
+    }
+     };
+  load();
+  function triggerHint(status,text) {
+    const hint = document.getElementById("hint-box");
+    hint.innerText = text;
+    hint.className = `hint-box show ${status}`;
+    setTimeout (() => {
+      hint.classList.remove("show");
+    },
+  2500);
+  }
+retryBtn.onclick = () => {
+  current= 0;
+  score = 0;
+  retryBtn.style.display = "none";
+  load(); 
+};
+    </script>
+  </body>
+</html>
+</script>
