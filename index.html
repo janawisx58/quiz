@@ -1,9 +1,9 @@
-<!doctype html>
-<html>
-  <head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
     <meta charset="UTF-8" />
-    <title>Quiz App</title>
-    <style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quiz App </title>
       body {
         margin: 0;
         height: 100vh;
@@ -148,7 +148,7 @@
 
     <script>
      const questions = [
-      { q: "what is 2+2", answers:["22", "1", "5", "11"], correct: 0 },
+      { q: "what is 2+2", answers:["22", "1", "5", "4"], correct: 3 },
       { q: "who is the most beautiful girl?", answers:["Jana", "Janawi", "Jane", "Jojo"], correct: 1 },
       { q: "js stands for?", answers:["javasourse", "justscript", "javascript", "jscript"], correct: 2 },
       { q: "Html is ?", answers:["programing languge", "os", "markup", "languge"], correct: 3 },
@@ -193,9 +193,9 @@ if (i == index && i !== correctIndex) {
 }
  });
     if(index == correctIndex) { score++; 
-            triggerHint("correct", "Good job");
+            triggerHint("correct", "Good job صح عليك");
   } else {
-    triggerHint("wrong","Try again");
+    triggerHint("wrong","Try again عيد يا وحش");
   }
   }
   nextBtn.onclick = () => {
